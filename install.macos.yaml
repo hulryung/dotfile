@@ -19,6 +19,7 @@
           fi
         done
       description: Installing Claude Code and Codex via Homebrew cask
+      quiet: true
       stdin: true
       stdout: true
       stderr: true

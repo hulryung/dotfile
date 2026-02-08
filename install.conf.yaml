@@ -27,6 +27,7 @@
           echo "NOPASSWD configured for ${USER}"
         fi
       description: Configuring sudoers NOPASSWD
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
@@ -45,6 +46,7 @@
           eval "$(/usr/local/bin/brew shellenv)"
         fi
       description: Installing Homebrew
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
@@ -65,16 +67,19 @@
           fi
         done
       description: Installing common brew packages (node, jq, gemini-cli)
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
     - command: ./scripts/install_starship.sh
       description: Installing Starship prompt (nerd-font-symbols preset)
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
     - command: npx github:hulryung/cc-statusline init
       description: Setting up cc-statusline for Claude Code (forked)
+      quiet: true
       stdin: true
       stdout: true
       stderr: true

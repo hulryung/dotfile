@@ -17,6 +17,7 @@
           curl -fsSL https://claude.ai/install.sh | bash
         fi
       description: Installing Claude Code (native installer)
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
@@ -27,15 +28,18 @@
           npm i -g @openai/codex
         fi
       description: Installing Codex CLI via npm
+      quiet: true
       stdout: true
       stderr: true
     - command: ./scripts/setup_screen.sh
       description: Setting up GNU Screen
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
     - command: sudo -E ./scripts/setup_samba_share.sh
       description: Configuring Samba share
+      quiet: true
       stdin: true
       stdout: true
       stderr: true
