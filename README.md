@@ -1,6 +1,6 @@
-# ubuntu-dotfile-plus
+# dotfile
 
-**ubuntu-dotfile-plus** is a turnkey bootstrap kit for fresh Ubuntu systems. It merges traditional *dotfiles* with modular post-installation scripts so you can transform a vanilla machine into a fully-equipped development workstation in minutes—consistently and repeatably.
+**dotfile** is a turnkey bootstrap kit for fresh Ubuntu systems. It merges traditional *dotfiles* with modular post-installation scripts so you can transform a vanilla machine into a fully-equipped development workstation in minutes—consistently and repeatably.
 
 Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative, idempotent dotfile management.
 
@@ -20,7 +20,7 @@ Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative,
 ## Directory Layout
 
 ```text
-ubuntu-dotfile-plus/
+dotfile/
 ├── install                  # Entry point: dotbot bootstrap shim
 ├── install.conf.yaml        # Dotbot configuration (links + shell commands)
 ├── dotbot/                  # Dotbot engine (git submodule)
@@ -41,8 +41,8 @@ ubuntu-dotfile-plus/
 
 ```bash
 # 1. Clone the repository (with submodules)
-git clone --recurse-submodules https://github.com/hulryung/ubuntu-dotfile-plus.git
-cd ubuntu-dotfile-plus
+git clone --recurse-submodules https://github.com/hulryung/dotfile.git
+cd dotfile
 
 # 2. Run the installer
 ./install
