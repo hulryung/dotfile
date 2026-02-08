@@ -73,8 +73,8 @@
       stdin: true
       stdout: true
       stderr: true
-    - command: npx @chongdashu/cc-statusline@latest init
-      description: Setting up cc-statusline for Claude Code
+    - command: npx github:hulryung/cc-statusline init
+      description: Setting up cc-statusline for Claude Code (forked)
       stdin: true
       stdout: true
       stderr: true
