@@ -1,19 +1,19 @@
 # ubuntu-dotfile-plus
 
-**ubuntu-dotfile-plus** is a turnkey bootstrap kit for fresh Ubuntu systems. It merges traditional *dotfiles* with modular post‑installation scripts so you can transform a vanilla machine into a fully‑equipped development workstation in minutes—consistently and repeatably.
+**ubuntu-dotfile-plus** is a turnkey bootstrap kit for fresh Ubuntu systems. It merges traditional *dotfiles* with modular post-installation scripts so you can transform a vanilla machine into a fully-equipped development workstation in minutes—consistently and repeatably.
+
+Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative, idempotent dotfile management.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-* **One‑command provisioning** – install packages, apply system tweaks, and symlink personalized config files with a single script.
-* **User-friendly execution** – can be run as a regular user; sudo privileges are requested only when needed.
-* **Curated dotfiles** – `bash`/`zsh`, `git`, `vim`/`neovim`, `tmux`, `ssh`, and more, all version‑controlled.
-* **Modular scripts** – independent install modules (e.g. `docker`, `samba`, `devtools`) that you can turn on/off.
-* **Idempotent by design** – safe to re‑run; existing settings are detected before modification.
-* **Ubuntu‑focused** – tuned for the latest LTS release, but compatible with most Debian‑based distros.
-* **Rollback safety** – critical files are automatically backed up before changes are applied.
-* **Starship Prompt** – modern cross-shell prompt with Gruvbox theme, Git status, language detection, and more.
+* **One-command provisioning** – install packages, apply system tweaks, and symlink config files with `./install`.
+* **Declarative configuration** – all dotfile links and setup steps defined in a single `install.conf.yaml`.
+* **Idempotent by design** – safe to re-run; dotbot detects existing symlinks and skips them.
+* **Modular scripts** – independent install modules (e.g. `samba`, `screen`, `starship`) under `scripts/`.
+* **Ubuntu-focused** – tuned for the latest LTS release, but compatible with most Debian-based distros.
+* **Starship Prompt** – modern cross-shell prompt with the [nerd-font-symbols](https://starship.rs/presets/nerd-font) preset.
 
 ---
 
@@ -21,35 +21,43 @@
 
 ```text
 ubuntu-dotfile-plus/
-├── bootstrap.sh        # Master launcher: orchestrates all steps
-├── config/             # Configuration files
-│   ├── starship.toml      # Starship prompt configuration
-│   ├── netrate_fast.sh    # Network configuration
-│   └── screenrc           # Screen configuration
-├── scripts/            # Self‑contained provisioning modules
-│   ├── install_starship.sh    # Starship prompt installer
-│   ├── setup_samba_share.sh   # Samba share setup
-│   └── setup_screen.sh        # Screen setup
+├── install                  # Entry point: dotbot bootstrap shim
+├── install.conf.yaml        # Dotbot configuration (links + shell commands)
+├── dotbot/                  # Dotbot engine (git submodule)
+├── config/                  # Configuration files
+│   ├── screenrc                 # GNU Screen configuration
+│   └── netrate_fast.sh          # Network throughput monitor for Screen status bar
+└── scripts/                 # Provisioning modules (called by dotbot shell directive)
+    ├── install_starship.sh      # Starship binary + nerd-font-symbols preset
+    ├── setup_screen.sh          # GNU Screen package installation
+    └── setup_samba_share.sh     # Samba share setup
 ```
 
 ---
 
-## 🚀 Installation
+## Installation
 
-### Quick Start (Full Bootstrap)
-
-For a complete setup with all features:
+### Quick Start
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/hulryung/ubuntu-dotfile-plus.git
+# 1. Clone the repository (with submodules)
+git clone --recurse-submodules https://github.com/hulryung/ubuntu-dotfile-plus.git
 cd ubuntu-dotfile-plus
 
-# 2. Run the bootstrap script (sudo will be requested when needed)
-./bootstrap.sh
+# 2. Run the installer
+./install
 ```
 
 Log out/in (or reboot) once the script completes to load your new shell environment.
+
+### Dotbot CLI Options
+
+```bash
+./install                  # Run everything
+./install --only link      # Symlinks only
+./install --only shell     # Shell commands only
+./install --except shell   # Everything except shell commands
+```
 
 ### Individual Component Installation
 
@@ -57,67 +65,26 @@ If you prefer to install specific components only:
 
 #### Starship Prompt
 
-The **Starship Prompt** is a modern, blazing-fast cross-shell prompt with a custom Gruvbox Dark theme:
+Installs [Starship](https://starship.rs) with the **nerd-font-symbols** preset:
 
-**Features:**
-* **OS Icon** – Displays your operating system with a beautiful icon
-* **User/Host Info** – Shows username@hostname with root user highlighted differently
-* **Current Directory** – Smart path truncation with icon substitutions
-* **Git Integration** – Branch name and status with color-coded indicators
-* **Language Detection** – Automatic detection and version display for:
-  * Python, Node.js, Rust, Go, Java, C/C++, PHP, Kotlin, Haskell
-* **Environment Detection** – Shows Docker context, Conda/Pixi environments
-* **Time Display** – Current time in HH:MM format
-* **Exit Status** – Visual indicator for command success (➤) or failure
-* **Gruvbox Theme** – Beautiful color scheme that's easy on the eyes
-
-**Installation:**
 ```bash
-# Clone the repo first
-git clone https://github.com/hulryung/ubuntu-dotfile-plus.git
-cd ubuntu-dotfile-plus/scripts
-./install_starship.sh
+./scripts/install_starship.sh
 ```
 
-**Manual Installation:**
+> Requires a [Nerd Font](https://www.nerdfonts.com/) (e.g. FiraCode Nerd Font) installed in your terminal.
+
+#### Samba Share
+
+Shares the current user's home directory over Samba with read/write access:
+
 ```bash
-# Install Starship
-curl -sS https://starship.rs/install.sh | sh
-
-# Copy configuration
-mkdir -p ~/.config
-cp config/starship.toml ~/.config/starship.toml
-
-# Add to your .bashrc
-echo 'eval "$(starship init bash)"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-#### Samba Share Setup
-
-`setup_samba_share.sh` shares the *current* user's home directory (`/home/<user>`) over Samba with **read/write** access so that a Windows PC can access it immediately after Ubuntu installation.
-
-**What It Does:**
-1. Installs the `samba` package (if missing).
-2. Backs up `/etc/samba/smb.conf` with a timestamp.
-3. Ensures correct ownership of the user's home directory.
-4. Appends a new share block to `smb.conf` (if it doesn't already exist).
-5. Prompts you to set a Samba password for the user.
-6. Restarts the `smbd` and `nmbd` services.
-
-**Installation:**
-```bash
-# Clone the repo first
-git clone https://github.com/hulryung/ubuntu-dotfile-plus.git
-cd ubuntu-dotfile-plus/scripts
-bash setup_samba_share.sh
+sudo -E ./scripts/setup_samba_share.sh
 ```
 
 After the script finishes, access the share from Windows:
-`\\<Ubuntu_IP>\<username>` — log in with the same username and the Samba password you just set.
+`\\<Ubuntu_IP>\<username>` — log in with the same username and the Samba password you set.
 
-> **Firewall tip** – If UFW is enabled, open ports 137–139 and 445:
->
+> **Firewall tip** – If UFW is enabled, open the required ports:
 > ```bash
 > sudo ufw allow samba
 > ```

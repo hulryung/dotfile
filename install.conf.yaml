@@ -1,0 +1,60 @@
+- defaults:
+    link:
+      relink: true
+      create: true
+    shell:
+      stdout: true
+      stderr: true
+
+- clean:
+    ~/:
+      force: true
+    ~/.config:
+      recursive: true
+      force: true
+
+- create:
+    - ~/.config
+
+- link:
+    ~/.screenrc: config/screenrc
+
+- shell:
+    - command: |
+        SUDOERS_FILE="/etc/sudoers.d/${USER}"
+        if [ -f "$SUDOERS_FILE" ] && grep -q "NOPASSWD" "$SUDOERS_FILE"; then
+          echo "NOPASSWD already configured for ${USER}"
+        else
+          echo "${USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee "$SUDOERS_FILE" >/dev/null
+          sudo chmod 0440 "$SUDOERS_FILE"
+          echo "NOPASSWD configured for ${USER}"
+        fi
+      description: Configuring sudoers NOPASSWD
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: |
+        if ! command -v brew &>/dev/null; then
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        else
+          echo "Homebrew is already installed ($(brew --version | head -n1))"
+        fi
+      description: Installing Homebrew
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: ./scripts/install_starship.sh
+      description: Installing Starship prompt (nerd-font-symbols preset)
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: ./scripts/setup_screen.sh
+      description: Setting up GNU Screen
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: sudo -E ./scripts/setup_samba_share.sh
+      description: Configuring Samba share
+      stdin: true
+      stdout: true
+      stderr: true
