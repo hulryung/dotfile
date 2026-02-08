@@ -43,6 +43,20 @@
       stdin: true
       stdout: true
       stderr: true
+    - command: |
+        # Ensure brew is on PATH (Linux installs to /home/linuxbrew)
+        eval "$(brew shellenv 2>/dev/null || true)"
+        for pkg in node jq claude-code codex gemini-cli; do
+          if brew list "$pkg" &>/dev/null; then
+            echo "$pkg is already installed"
+          else
+            brew install "$pkg"
+          fi
+        done
+      description: Installing dev tools via Homebrew (node, jq, claude-code, codex, gemini-cli)
+      stdin: true
+      stdout: true
+      stderr: true
     - command: ./scripts/install_starship.sh
       description: Installing Starship prompt (nerd-font-symbols preset)
       stdin: true
@@ -55,6 +69,11 @@
       stderr: true
     - command: sudo -E ./scripts/setup_samba_share.sh
       description: Configuring Samba share
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: npx @chongdashu/cc-statusline@latest init
+      description: Setting up cc-statusline for Claude Code
       stdin: true
       stdout: true
       stderr: true
