@@ -11,9 +11,26 @@ Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative,
 * **One-command provisioning** – install packages, apply system tweaks, and symlink config files with `./install`.
 * **Declarative configuration** – all dotfile links and setup steps defined in a single `install.conf.yaml`.
 * **Idempotent by design** – safe to re-run; dotbot detects existing symlinks and skips them.
-* **Modular scripts** – independent install modules (e.g. `samba`, `screen`, `starship`) under `scripts/`.
+* **Modular scripts** – independent install modules under `scripts/`.
 * **Ubuntu-focused** – tuned for the latest LTS release, but compatible with most Debian-based distros.
+* **AI coding tools** – Claude Code, Codex, and Gemini CLI installed via Homebrew.
 * **Starship Prompt** – modern cross-shell prompt with the [nerd-font-symbols](https://starship.rs/presets/nerd-font) preset.
+* **cc-statusline** – beautiful status bar for Claude Code with context, cost, and session tracking.
+
+---
+
+## What Gets Installed
+
+| Step | Description |
+|------|-------------|
+| sudoers NOPASSWD | Passwordless sudo for the current user |
+| Homebrew | Package manager for Linux/macOS |
+| Node.js, jq | Runtime and JSON processor |
+| Claude Code, Codex, Gemini CLI | AI coding assistants |
+| Starship | Cross-shell prompt with nerd-font-symbols preset |
+| GNU Screen | Terminal multiplexer with custom config |
+| Samba | Home directory sharing for Windows access |
+| cc-statusline | Claude Code status bar setup |
 
 ---
 
