@@ -16,9 +16,6 @@
 - create:
     - ~/.config
 
-- link:
-    ~/.screenrc: config/screenrc
-
 - shell:
     - command: |
         SUDOERS_FILE="/etc/sudoers.d/${USER}"
@@ -39,36 +36,40 @@
         else
           echo "Homebrew is already installed ($(brew --version | head -n1))"
         fi
+        # Ensure brew is on PATH after install
+        if [ -d /home/linuxbrew/.linuxbrew ]; then
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        elif [ -d /opt/homebrew ]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -d /usr/local/Homebrew ]; then
+          eval "$(/usr/local/bin/brew shellenv)"
+        fi
       description: Installing Homebrew
       stdin: true
       stdout: true
       stderr: true
     - command: |
-        # Ensure brew is on PATH (Linux installs to /home/linuxbrew)
-        eval "$(brew shellenv 2>/dev/null || true)"
-        for pkg in node jq claude-code codex gemini-cli; do
+        # Ensure brew is on PATH
+        if [ -d /home/linuxbrew/.linuxbrew ]; then
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        elif [ -d /opt/homebrew ]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -d /usr/local/Homebrew ]; then
+          eval "$(/usr/local/bin/brew shellenv)"
+        fi
+        for pkg in node jq gemini-cli; do
           if brew list "$pkg" &>/dev/null; then
             echo "$pkg is already installed"
           else
             brew install "$pkg"
           fi
         done
-      description: Installing dev tools via Homebrew (node, jq, claude-code, codex, gemini-cli)
+      description: Installing common brew packages (node, jq, gemini-cli)
       stdin: true
       stdout: true
       stderr: true
     - command: ./scripts/install_starship.sh
       description: Installing Starship prompt (nerd-font-symbols preset)
-      stdin: true
-      stdout: true
-      stderr: true
-    - command: ./scripts/setup_screen.sh
-      description: Setting up GNU Screen
-      stdin: true
-      stdout: true
-      stderr: true
-    - command: sudo -E ./scripts/setup_samba_share.sh
-      description: Configuring Samba share
       stdin: true
       stdout: true
       stderr: true

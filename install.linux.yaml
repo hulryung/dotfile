@@ -1,0 +1,41 @@
+- defaults:
+    link:
+      relink: true
+      create: true
+    shell:
+      stdout: true
+      stderr: true
+
+- link:
+    ~/.screenrc: config/screenrc
+
+- shell:
+    - command: |
+        if command -v claude &>/dev/null; then
+          echo "Claude Code is already installed"
+        else
+          curl -fsSL https://claude.ai/install.sh | bash
+        fi
+      description: Installing Claude Code (native installer)
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: |
+        if command -v codex &>/dev/null; then
+          echo "Codex is already installed"
+        else
+          npm i -g @openai/codex
+        fi
+      description: Installing Codex CLI via npm
+      stdout: true
+      stderr: true
+    - command: ./scripts/setup_screen.sh
+      description: Setting up GNU Screen
+      stdin: true
+      stdout: true
+      stderr: true
+    - command: sudo -E ./scripts/setup_samba_share.sh
+      description: Configuring Samba share
+      stdin: true
+      stdout: true
+      stderr: true

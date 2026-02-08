@@ -1,6 +1,6 @@
 # dotfile
 
-**dotfile** is a turnkey bootstrap kit for fresh Ubuntu systems. It merges traditional *dotfiles* with modular post-installation scripts so you can transform a vanilla machine into a fully-equipped development workstation in minutes—consistently and repeatably.
+**dotfile** is a turnkey bootstrap kit for fresh Ubuntu and macOS systems. It merges traditional *dotfiles* with modular post-installation scripts so you can transform a vanilla machine into a fully-equipped development workstation in minutes—consistently and repeatably.
 
 Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative, idempotent dotfile management.
 
@@ -9,11 +9,10 @@ Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative,
 ## Key Features
 
 * **One-command provisioning** – install packages, apply system tweaks, and symlink config files with `./install`.
-* **Declarative configuration** – all dotfile links and setup steps defined in a single `install.conf.yaml`.
+* **Cross-platform** – single repository for both Linux (Ubuntu) and macOS with OS-specific configs.
+* **Declarative configuration** – all setup steps defined in YAML (`install.conf.yaml` + OS-specific files).
 * **Idempotent by design** – safe to re-run; dotbot detects existing symlinks and skips them.
-* **Modular scripts** – independent install modules under `scripts/`.
-* **Ubuntu-focused** – tuned for the latest LTS release, but compatible with most Debian-based distros.
-* **AI coding tools** – Claude Code, Codex, and Gemini CLI installed via Homebrew.
+* **AI coding tools** – Claude Code, Codex, and Gemini CLI.
 * **Starship Prompt** – modern cross-shell prompt with the [nerd-font-symbols](https://starship.rs/presets/nerd-font) preset.
 * **cc-statusline** – beautiful status bar for Claude Code with context, cost, and session tracking.
 
@@ -21,16 +20,18 @@ Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative,
 
 ## What Gets Installed
 
-| Step | Description |
-|------|-------------|
-| sudoers NOPASSWD | Passwordless sudo for the current user |
-| Homebrew | Package manager for Linux/macOS |
-| Node.js, jq | Runtime and JSON processor |
-| Claude Code, Codex, Gemini CLI | AI coding assistants |
-| Starship | Cross-shell prompt with nerd-font-symbols preset |
-| GNU Screen | Terminal multiplexer with custom config |
-| Samba | Home directory sharing for Windows access |
-| cc-statusline | Claude Code status bar setup |
+| Step | Common | Linux | macOS |
+|------|--------|-------|-------|
+| sudoers NOPASSWD | Y | | |
+| Homebrew | Y | | |
+| Node.js, jq | Y | | |
+| Gemini CLI | Y | | |
+| Starship (nerd-font-symbols) | Y | | |
+| cc-statusline | Y | | |
+| Claude Code | | native installer | brew --cask |
+| Codex | | npm | brew --cask |
+| GNU Screen + screenrc | | Y | |
+| Samba share | | Y | |
 
 ---
 
@@ -38,16 +39,18 @@ Powered by [**dotbot**](https://github.com/anishathalye/dotbot) for declarative,
 
 ```text
 dotfile/
-├── install                  # Entry point: dotbot bootstrap shim
-├── install.conf.yaml        # Dotbot configuration (links + shell commands)
+├── install                  # Entry point: OS detection + dotbot runner
+├── install.conf.yaml        # Common configuration (both platforms)
+├── install.linux.yaml       # Linux-specific (screen, samba, claude-code, codex)
+├── install.macos.yaml       # macOS-specific (claude-code, codex via cask)
 ├── dotbot/                  # Dotbot engine (git submodule)
 ├── config/                  # Configuration files
-│   ├── screenrc                 # GNU Screen configuration
+│   ├── screenrc                 # GNU Screen configuration (Linux)
 │   └── netrate_fast.sh          # Network throughput monitor for Screen status bar
-└── scripts/                 # Provisioning modules (called by dotbot shell directive)
+└── scripts/                 # Provisioning modules
     ├── install_starship.sh      # Starship binary + nerd-font-symbols preset
-    ├── setup_screen.sh          # GNU Screen package installation
-    └── setup_samba_share.sh     # Samba share setup
+    ├── setup_screen.sh          # GNU Screen package installation (Linux)
+    └── setup_samba_share.sh     # Samba share setup (Linux)
 ```
 
 ---
@@ -61,9 +64,11 @@ dotfile/
 git clone --recurse-submodules https://github.com/hulryung/dotfile.git
 cd dotfile
 
-# 2. Run the installer
+# 2. Run the installer (auto-detects OS)
 ./install
 ```
+
+The `install` script automatically runs `install.conf.yaml` (common), then `install.linux.yaml` or `install.macos.yaml` based on the detected OS.
 
 Log out/in (or reboot) once the script completes to load your new shell environment.
 
@@ -90,7 +95,7 @@ Installs [Starship](https://starship.rs) with the **nerd-font-symbols** preset:
 
 > Requires a [Nerd Font](https://www.nerdfonts.com/) (e.g. FiraCode Nerd Font) installed in your terminal.
 
-#### Samba Share
+#### Samba Share (Linux only)
 
 Shares the current user's home directory over Samba with read/write access:
 

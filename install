@@ -8,4 +8,17 @@ cd "${BASEDIR}"
 git -C dotbot submodule sync --quiet --recursive
 git submodule update --init --recursive dotbot
 
+# Common config
 "${BASEDIR}/dotbot/bin/dotbot" -d "${BASEDIR}" -c install.conf.yaml "${@}"
+
+# OS-specific config
+case "$(uname -s)" in
+  Linux)
+    echo "[dotbot] Running Linux-specific configuration..."
+    "${BASEDIR}/dotbot/bin/dotbot" -d "${BASEDIR}" -c install.linux.yaml "${@}"
+    ;;
+  Darwin)
+    echo "[dotbot] Running macOS-specific configuration..."
+    "${BASEDIR}/dotbot/bin/dotbot" -d "${BASEDIR}" -c install.macos.yaml "${@}"
+    ;;
+esac
