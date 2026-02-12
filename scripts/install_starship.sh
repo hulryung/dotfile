@@ -45,7 +45,7 @@ starship preset nerd-font-symbols -o "$HOME/.config/starship.toml"
 print_status "Preset written to ~/.config/starship.toml"
 
 # ---------------------------------------------------------------------------
-# 3. Add starship init to .bashrc (idempotent)
+# 3. Add starship init to shell rc files (idempotent)
 # ---------------------------------------------------------------------------
 if grep -q "starship init bash" "$HOME/.bashrc" 2>/dev/null; then
     print_warning "Starship init already present in .bashrc"
@@ -56,5 +56,14 @@ else
     print_status "Added starship init to .bashrc"
 fi
 
+if grep -q "starship init zsh" "$HOME/.zshrc" 2>/dev/null; then
+    print_warning "Starship init already present in .zshrc"
+else
+    echo "" >> "$HOME/.zshrc"
+    echo "# Starship Prompt" >> "$HOME/.zshrc"
+    echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+    print_status "Added starship init to .zshrc"
+fi
+
 print_status "Starship prompt installed with nerd-font-symbols preset!"
-print_status "To activate, restart your terminal or run: source ~/.bashrc"
+print_status "To activate, restart your terminal or run: source ~/.zshrc"
